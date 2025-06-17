@@ -48,7 +48,7 @@ def copy_folder_contents(from_path: Path | str, to_path: Path | str) -> None:
 def main(basepath: str) -> None:
     """Main entry point for sh files."""
 
-    clear_folder_contents("./static")
+    clear_folder_contents("./docs")
     copy_folder_contents("./static", "./docs")
 
     generate_pages_recursive(
