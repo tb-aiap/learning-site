@@ -17,7 +17,10 @@ html that are parentnode
 
 
 def generate_pages_recursive(
-    dir_path_content: str, template_path: str, dest_dir_path: str
+    dir_path_content: str,
+    template_path: str,
+    dest_dir_path: str,
+    basepath: str,
 ) -> None:
 
     dir_path_content: Path = Path(dir_path_content)
@@ -27,15 +30,20 @@ def generate_pages_recursive(
     for file in dir_path_content.iterdir():
         if file.is_file():
             dest_path_html = Path(dest_dir_path, "index.html")
-            generate_page(file, template_path, dest_path_html)
+            generate_page(file, template_path, dest_path_html, basepath)
         if file.is_dir():
             new_dest_dir = Path(dest_dir_path, file.name)
-            generate_pages_recursive(file, template_path, new_dest_dir)
+            generate_pages_recursive(file, template_path, new_dest_dir, basepath)
 
     return
 
 
-def generate_page(from_path: str, template_path: str, dest_path: str):
+def generate_page(
+    from_path: str,
+    template_path: str,
+    dest_path: str,
+    basepath: str,
+) -> None:
     print(f"Creating page from {from_path} to {dest_path} using {template_path}")
 
     from_path = Path(from_path)
@@ -53,10 +61,12 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
 
     template_with_title = template.replace("{{ Title }}", title)
     template_content = template_with_title.replace("{{ Content }}", html_content)
+    template_href = template_content.replace('href="/', f'href="{basepath}')
+    template_src = template_href.replace('src="/', f'src="{basepath}')
 
     dest_path.parent.mkdir(parents=True, exist_ok=True)
     with open(dest_path, "w") as f:
-        f.write(template_content)
+        f.write(template_src)
 
     print(f"Completed creating {dest_path}")
 

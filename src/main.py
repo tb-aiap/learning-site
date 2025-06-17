@@ -1,5 +1,6 @@
 """Main module for static site generator."""
 
+import argparse
 import shutil
 from pathlib import Path
 
@@ -44,17 +45,28 @@ def copy_folder_contents(from_path: Path | str, to_path: Path | str) -> None:
             copy_folder_contents(file, new_to_path)
 
 
-def main():
+def main(basepath: str) -> None:
     """Main entry point for sh files."""
+
     clear_folder_contents("./static")
-    copy_folder_contents("./static", "./public")
+    copy_folder_contents("./static", "./docs")
 
     generate_pages_recursive(
         dir_path_content="./content",
         template_path="./template.html",
-        dest_dir_path="./public",
+        dest_dir_path="./docs",
+        basepath=basepath,
     )
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "basepath",
+        nargs="?",
+        default="/",
+        help="base path to generate the website pages",
+    )
+    args = parser.parse_args()
+
+    main(args.basepath)
